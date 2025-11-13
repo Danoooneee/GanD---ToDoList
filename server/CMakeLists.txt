@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.15)
+project(todomanager_cpp LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+find_package(Drogon CONFIG REQUIRED)
+add_executable(todomanager main.cpp)
+target_link_libraries(todomanager PRIVATE Drogon::Drogon)
