@@ -21,12 +21,12 @@
   </script>
 
   <script
-          crossorigin
-          src="https://unpkg.com/react@18/umd/react.development.js"
+    crossorigin
+    src="https://unpkg.com/react@18/umd/react.development.js"
   ></script>
   <script
-          crossorigin
-          src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+    crossorigin
+    src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
   ></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
@@ -89,7 +89,7 @@
   };
 
   const uid = () =>
-          Math.random().toString(36).slice(2) + Date.now().toString(36);
+    Math.random().toString(36).slice(2) + Date.now().toString(36);
   const todayIso = () => new Date().toISOString().slice(0, 10);
   const nowIso = () => new Date().toISOString();
 
@@ -159,9 +159,9 @@
 
       case "renameList": {
         const lists = state.lists.map((l) =>
-                l.id === action.id
-                        ? { ...l, name: action.name, updatedAt: nowIso() }
-                        : l
+          l.id === action.id
+            ? { ...l, name: action.name, updatedAt: nowIso() }
+            : l
         );
         persistLists(lists);
         return { ...state, lists };
@@ -178,16 +178,16 @@
           lists,
           tasks,
           selectedListId:
-                  state.selectedListId === action.id
-                          ? "inbox"
-                          : state.selectedListId,
+            state.selectedListId === action.id
+              ? "inbox"
+              : state.selectedListId,
         };
       }
 
       case "addTask": {
         const baseListId = SMART_LISTS.includes(state.selectedListId)
-                ? "inbox"
-                : state.selectedListId;
+          ? "inbox"
+          : state.selectedListId;
 
         const task = {
           id: uid(),
@@ -211,9 +211,9 @@
 
       case "updateTask": {
         const tasks = state.tasks.map((t) =>
-                t.id === action.id
-                        ? { ...t, ...action.patch, updatedAt: nowIso() }
-                        : t
+          t.id === action.id
+            ? { ...t, ...action.patch, updatedAt: nowIso() }
+            : t
         );
         persistTasks(tasks);
         return { ...state, tasks };
@@ -227,16 +227,16 @@
 
       case "addSub": {
         const tasks = state.tasks.map((t) =>
-                t.id === action.id
-                        ? {
-                          ...t,
-                          subtasks: [
-                            ...(t.subtasks || []),
-                            { id: uid(), title: action.title, done: false },
-                          ],
-                          updatedAt: nowIso(),
-                        }
-                        : t
+          t.id === action.id
+            ? {
+                ...t,
+                subtasks: [
+                  ...(t.subtasks || []),
+                  { id: uid(), title: action.title, done: false },
+                ],
+                updatedAt: nowIso(),
+              }
+            : t
         );
         persistTasks(tasks);
         return { ...state, tasks };
@@ -244,15 +244,15 @@
 
       case "toggleSub": {
         const tasks = state.tasks.map((t) =>
-                t.id === action.id
-                        ? {
-                          ...t,
-                          subtasks: (t.subtasks || []).map((s) =>
-                                  s.id === action.subId ? { ...s, done: !s.done } : s
-                          ),
-                          updatedAt: nowIso(),
-                        }
-                        : t
+          t.id === action.id
+            ? {
+                ...t,
+                subtasks: (t.subtasks || []).map((s) =>
+                  s.id === action.subId ? { ...s, done: !s.done } : s
+                ),
+                updatedAt: nowIso(),
+              }
+            : t
         );
         persistTasks(tasks);
         return { ...state, tasks };
@@ -260,15 +260,13 @@
 
       case "removeSub": {
         const tasks = state.tasks.map((t) =>
-                t.id === action.id
-                        ? {
-                          ...t,
-                          subtasks: (t.subtasks || []).filter(
-                                  (s) => s.id !== action.subId
-                          ),
-                          updatedAt: nowIso(),
-                        }
-                        : t
+          t.id === action.id
+            ? {
+                ...t,
+                subtasks: (t.subtasks || []).filter((s) => s.id !== action.subId),
+                updatedAt: nowIso(),
+              }
+            : t
         );
         persistTasks(tasks);
         return { ...state, tasks };
@@ -296,8 +294,9 @@
     });
     const [query, setQuery] = useState("");
     const [dense, setDense] = useState(false);
+    const [sortMode, setSortMode] = useState("default");
     const [mode, setMode] = useState(
-            () => localStorage.getItem(THEME_MODE_KEY) || "light"
+      () => localStorage.getItem(THEME_MODE_KEY) || "light"
     );
 
     useEffect(() => {
@@ -309,8 +308,8 @@
 
     useEffect(() => {
       document.documentElement.style.setProperty(
-              "--brand",
-              `hsl(${state.themeHue} 90% 45%)`
+        "--brand",
+        `hsl(${state.themeHue} 90% 45%)`
       );
     }, [state.themeHue]);
 
@@ -324,32 +323,31 @@
     }, [mode]);
 
     const currentList = useMemo(
-            () =>
-                    state.lists.find((l) => l.id === state.selectedListId) ||
-                    DEFAULT_LIST,
-            [state]
+      () =>
+        state.lists.find((l) => l.id === state.selectedListId) || DEFAULT_LIST,
+      [state]
     );
 
     const baseTasks = useMemo(() => {
       let src;
       if (
-              state.selectedListId === "inbox" ||
-              SMART_LISTS.includes(state.selectedListId)
+        state.selectedListId === "inbox" ||
+        SMART_LISTS.includes(state.selectedListId)
       ) {
         src = state.tasks;
       } else {
         src = state.tasks.filter(
-                (t) => t.listId === state.selectedListId
+          (t) => t.listId === state.selectedListId
         );
       }
 
       if (query) {
         const q = query.toLowerCase();
         src = src.filter((t) =>
-                [t.title, t.notes, ...(t.tags || [])]
-                        .join(" ")
-                        .toLowerCase()
-                        .includes(q)
+          [t.title, t.notes, ...(t.tags || [])]
+            .join(" ")
+            .toLowerCase()
+            .includes(q)
         );
       }
 
@@ -357,18 +355,53 @@
     }, [state.tasks, state.selectedListId, query]);
 
     const visibleTasks = useMemo(
-            () => filterBySmartList(baseTasks, state.selectedListId),
-            [baseTasks, state.selectedListId]
+      () => filterBySmartList(baseTasks, state.selectedListId),
+      [baseTasks, state.selectedListId]
     );
 
+    const sortedTasks = useMemo(() => {
+      const arr = [...visibleTasks];
+      if (sortMode === "default") return arr;
+
+      const priorityRank = { high: 3, medium: 2, low: 1, none: 0 };
+
+      return arr.sort((a, b) => {
+        // 1) незавершені → завершені
+        if (a.status !== b.status) {
+          return a.status === "todo" ? -1 : 1;
+        }
+
+        // 2) наявність dueDate
+        const ad = a.dueDate || "";
+        const bd = b.dueDate || "";
+        if (ad !== bd) {
+          if (!ad) return 1;  // без дати – нижче
+          if (!bd) return -1;
+          if (ad < bd) return -1;
+          if (ad > bd) return 1;
+        }
+
+        // 3) пріоритет: high → medium → low → none
+        const pa = priorityRank[a.priority || "none"] ?? 0;
+        const pb = priorityRank[b.priority || "none"] ?? 0;
+        if (pa !== pb) return pb - pa;
+
+        // 4) створення (старіші вище)
+        if (a.createdAt < b.createdAt) return -1;
+        if (a.createdAt > b.createdAt) return 1;
+
+        return 0;
+      });
+    }, [visibleTasks, sortMode]);
+
     const plannedCount = state.tasks.filter(
-            (t) => !!t.dueDate && t.status !== "done"
+      (t) => !!t.dueDate && t.status !== "done"
     ).length;
     const importantCount = state.tasks.filter(
-            (t) => t.priority === "high" && t.status !== "done"
+      (t) => t.priority === "high" && t.status !== "done"
     ).length;
     const todayCount = state.tasks.filter(
-            (t) => t.dueDate === todayIso() && t.status !== "done"
+      (t) => t.dueDate === todayIso() && t.status !== "done"
     ).length;
 
     const selectedTitle = (() => {
@@ -387,202 +420,212 @@
     })();
 
     return (
-            <div className="grid min-h-screen grid-cols-1 md:grid-cols-[300px_1fr] bg-white text-black dark:bg-neutral-950 dark:text-neutral-100">
-              <aside className="border-r border-neutral-200 dark:border-neutral-800 p-3 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div
-                          className="text-2xl font-bold"
-                          style={{ color: "var(--brand)" }}
-                  >
-                    GanD - ToDoList
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                            className="btn"
-                            onClick={() =>
-                                    dispatch({
-                                      type: "setTheme",
-                                      hue: (state.themeHue + 30) % 360,
-                                    })
-                            }
-                    >
-                      🎨
-                    </button>
-                    <button
-                            className="btn"
-                            onClick={() => setMode(mode === "dark" ? "light" : "dark")}
-                    >
-                      {mode === "dark" ? "🌞" : "🌙"}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5 opacity-60">🔎</span>
-                  <input
-                          className="w-full rounded-xl border bg-white dark:bg-neutral-900 dark:border-neutral-800 pl-8 pr-3 py-2"
-                          placeholder="Пошук задач…"
-                          value={query}
-                          onChange={(e) => setQuery(e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <SidebarItem
-                          active={state.selectedListId === "inbox"}
-                          onClick={() => dispatch({ type: "selectList", id: "inbox" })}
-                          icon="📚"
-                          label="All"
-                          badge={state.tasks.filter((t) => t.status !== "done").length}
-                  />
-                  <SidebarItem
-                          active={state.selectedListId === "myday"}
-                          onClick={() => dispatch({ type: "selectList", id: "myday" })}
-                          icon="📅"
-                          label="My Day"
-                          badge={todayCount}
-                  />
-                  <SidebarItem
-                          active={state.selectedListId === "planned"}
-                          onClick={() =>
-                                  dispatch({ type: "selectList", id: "planned" })
-                          }
-                          icon="⏰"
-                          label="Planned"
-                          badge={plannedCount}
-                  />
-                  <SidebarItem
-                          active={state.selectedListId === "important"}
-                          onClick={() =>
-                                  dispatch({ type: "selectList", id: "important" })
-                          }
-                          icon="⭐"
-                          label="Important"
-                          badge={importantCount}
-                  />
-                </div>
-
-                <div className="pt-2">
-                  <div className="mb-2 text-xs uppercase opacity-60">Lists</div>
-                  <div className="space-y-1">
-                    {state.lists.map((l) => (
-                            <SidebarItem
-                                    key={l.id}
-                                    active={state.selectedListId === l.id}
-                                    onClick={() => dispatch({ type: "selectList", id: l.id })}
-                                    icon={l.icon || "🗂️"}
-                                    label={l.name}
-                                    badge={
-                                      state.tasks.filter(
-                                              (t) => t.listId === l.id && t.status !== "done"
-                                      ).length
-                                    }
-                            />
-                    ))}
-                  </div>
-                  <button
-                          className="mt-2 btn"
-                          onClick={() => {
-                            const name = prompt("New list name");
-                            if (name) dispatch({ type: "addList", name });
-                          }}
-                  >
-                    ➕ Add list
-                  </button>
-                </div>
-              </aside>
-
-              <main className="p-4 space-y-5">
-                <SectionTitle
-                        icon="✅"
-                        title={selectedTitle}
-                        right={
-                          <div className="flex items-center gap-2">
-                            <button className="btn" onClick={() => setDense((v) => !v)}>
-                              Density: {dense ? "Compact" : "Comfort"}
-                            </button>
-                          </div>
-                        }
-                />
-
-                <QuickAdd
-                        onAdd={(title) => {
-                          const payload = { type: "addTask", title };
-
-                          if (state.selectedListId === "myday") {
-                            payload.dueDate = todayIso();
-                          }
-                          if (state.selectedListId === "planned") {
-                            payload.dueDate = todayIso();
-                          }
-                          if (state.selectedListId === "important") {
-                            payload.priority = "high";
-                          }
-
-                          dispatch(payload);
-                        }}
-                />
-
-                <TaskList
-                        dense={dense}
-                        tasks={visibleTasks}
-                        onToggle={(id, done) =>
-                                dispatch({
-                                  type: "updateTask",
-                                  id,
-                                  patch: { status: done ? "done" : "todo" },
-                                })
-                        }
-                        onUpdate={(id, patch) =>
-                                dispatch({ type: "updateTask", id, patch })
-                        }
-                        onDelete={(id) => dispatch({ type: "removeTask", id })}
-                        onAddSubtask={(id, title) =>
-                                dispatch({ type: "addSub", id, title })
-                        }
-                        onToggleSubtask={(id, subId) =>
-                                dispatch({ type: "toggleSub", id, subId })
-                        }
-                        onRemoveSubtask={(id, subId) =>
-                                dispatch({ type: "removeSub", id, subId })
-                        }
-                />
-              </main>
+      <div className="grid min-h-screen grid-cols-1 md:grid-cols-[300px_1fr] bg-white text-black dark:bg-neutral-950 dark:text-neutral-100">
+        <aside className="border-r border-neutral-200 dark:border-neutral-800 p-3 space-y-3">
+          <div className="flex items-center justify-between">
+            <div
+              className="text-2xl font-bold"
+              style={{ color: "var(--brand)" }}
+            >
+              GanD - ToDoList
             </div>
+            <div className="flex items-center gap-2">
+              <button
+                className="btn"
+                onClick={() =>
+                  dispatch({
+                    type: "setTheme",
+                    hue: (state.themeHue + 30) % 360,
+                  })
+                }
+              >
+                🎨
+              </button>
+              <button
+                className="btn"
+                onClick={() => setMode(mode === "dark" ? "light" : "dark")}
+              >
+                {mode === "dark" ? "🌞" : "🌙"}
+              </button>
+            </div>
+          </div>
+
+          <div className="relative">
+            <span className="absolute left-3 top-2.5 opacity-60">🔎</span>
+            <input
+              className="w-full rounded-xl border bg-white dark:bg-neutral-900 dark:border-neutral-800 pl-8 pr-3 py-2"
+              placeholder="Пошук задач…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <SidebarItem
+              active={state.selectedListId === "inbox"}
+              onClick={() => dispatch({ type: "selectList", id: "inbox" })}
+              icon="📚"
+              label="All"
+              badge={state.tasks.filter((t) => t.status !== "done").length}
+            />
+            <SidebarItem
+              active={state.selectedListId === "myday"}
+              onClick={() => dispatch({ type: "selectList", id: "myday" })}
+              icon="📅"
+              label="My Day"
+              badge={todayCount}
+            />
+            <SidebarItem
+              active={state.selectedListId === "planned"}
+              onClick={() =>
+                dispatch({ type: "selectList", id: "planned" })
+              }
+              icon="⏰"
+              label="Planned"
+              badge={plannedCount}
+            />
+            <SidebarItem
+              active={state.selectedListId === "important"}
+              onClick={() =>
+                dispatch({ type: "selectList", id: "important" })
+              }
+              icon="⭐"
+              label="Important"
+              badge={importantCount}
+            />
+          </div>
+
+          <div className="pt-2">
+            <div className="mb-2 text-xs uppercase opacity-60">Lists</div>
+            <div className="space-y-1">
+              {state.lists.map((l) => (
+                <SidebarItem
+                  key={l.id}
+                  active={state.selectedListId === l.id}
+                  onClick={() => dispatch({ type: "selectList", id: l.id })}
+                  icon={l.icon || "🗂️"}
+                  label={l.name}
+                  badge={
+                    state.tasks.filter(
+                      (t) => t.listId === l.id && t.status !== "done"
+                    ).length
+                  }
+                />
+              ))}
+            </div>
+            <button
+              className="mt-2 btn"
+              onClick={() => {
+                const name = prompt("New list name");
+                if (name) dispatch({ type: "addList", name });
+              }}
+            >
+              ➕ Add list
+            </button>
+          </div>
+        </aside>
+
+        <main className="p-4 space-y-5">
+          <SectionTitle
+            icon="✅"
+            title={selectedTitle}
+            right={
+              <div className="flex items-center gap-2">
+                <button className="btn" onClick={() => setDense((v) => !v)}>
+                  Density: {dense ? "Compact" : "Comfort"}
+                </button>
+                <button
+                  className="btn"
+                  onClick={() =>
+                    setSortMode((m) =>
+                      m === "default" ? "smart" : "default"
+                    )
+                  }
+                >
+                  {sortMode === "default" ? "🧹 Sort" : "🧹 Sorted"}
+                </button>
+              </div>
+            }
+          />
+
+          <QuickAdd
+            onAdd={(title) => {
+              const payload = { type: "addTask", title };
+
+              if (state.selectedListId === "myday") {
+                payload.dueDate = todayIso();
+              }
+              if (state.selectedListId === "planned") {
+                payload.dueDate = todayIso();
+              }
+              if (state.selectedListId === "important") {
+                payload.priority = "high";
+              }
+
+              dispatch(payload);
+            }}
+          />
+
+          <TaskList
+            dense={dense}
+            tasks={sortedTasks}
+            onToggle={(id, done) =>
+              dispatch({
+                type: "updateTask",
+                id,
+                patch: { status: done ? "done" : "todo" },
+              })
+            }
+            onUpdate={(id, patch) =>
+              dispatch({ type: "updateTask", id, patch })
+            }
+            onDelete={(id) => dispatch({ type: "removeTask", id })}
+            onAddSubtask={(id, title) =>
+              dispatch({ type: "addSub", id, title })
+            }
+            onToggleSubtask={(id, subId) =>
+              dispatch({ type: "toggleSub", id, subId })
+            }
+            onRemoveSubtask={(id, subId) =>
+              dispatch({ type: "removeSub", id, subId })
+            }
+          />
+        </main>
+      </div>
     );
   }
 
   function SectionTitle({ icon, title, right }) {
     return (
-            <div className="flex items-center justify-between border-b pb-2 dark:border-neutral-800">
-              <div className="flex items-center gap-2 text-xl font-semibold">
-                <span className="opacity-80">{icon}</span>
-                <span>{title}</span>
-              </div>
-              {right}
-            </div>
+      <div className="flex items-center justify-between border-b pb-2 dark:border-neutral-800">
+        <div className="flex items-center gap-2 text-xl font-semibold">
+          <span className="opacity-80">{icon}</span>
+          <span>{title}</span>
+        </div>
+        {right}
+      </div>
     );
   }
 
   function SidebarItem({ active, onClick, icon, label, badge }) {
     return (
-            <button
-                    onClick={onClick}
-                    className={
-                            "flex w-full items-center justify-between rounded-xl px-3 py-2 text-left hover:bg-black/5 dark:hover:bg-white/10 " +
-                            (active ? "bg-black/5 dark:bg-white/10" : "")
-                    }
-            >
-            <span className="flex items-center gap-2">
-              <span className="opacity-80">{icon}</span>
-              <span>{label}</span>
-            </span>
-              {badge > 0 && (
-                      <span className="rounded-full bg-black/10 dark:bg-white/20 px-2 text-xs">
-                {badge}
-              </span>
-              )}
-            </button>
+      <button
+        onClick={onClick}
+        className={
+          "flex w-full items-center justify-between rounded-xl px-3 py-2 text-left hover:bg-black/5 dark:hover:bg:white/10 " +
+          (active ? "bg-black/5 dark:bg-white/10" : "")
+        }
+      >
+        <span className="flex items-center gap-2">
+          <span className="opacity-80">{icon}</span>
+          <span>{label}</span>
+        </span>
+        {badge > 0 && (
+          <span className="rounded-full bg-black/10 dark:bg-white/20 px-2 text-xs">
+            {badge}
+          </span>
+        )}
+      </button>
     );
   }
 
@@ -596,8 +639,8 @@
         if (e.key.toLowerCase() === "n") inputRef.current?.focus();
         if (e.key === "/") {
           document
-                  .querySelector("input[placeholder='Пошук задач…']")
-                  ?.focus();
+            .querySelector("input[placeholder='Пошук задач…']")
+            ?.focus();
           e.preventDefault();
         }
       };
@@ -606,32 +649,32 @@
     }, []);
 
     return (
-            <div className="flex items-center gap-2">
-              <input
-                      ref={inputRef}
-                      className="flex-1 rounded-xl border bg-white dark:bg-neutral-900 dark:border-neutral-700 px-3 py-2"
-                      placeholder="Додати задачу (Enter)…"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && title.trim()) {
-                          onAdd(title);
-                          setTitle("");
-                        }
-                      }}
-              />
-              <button
-                      className="rounded-xl px-3 py-2 text-white"
-                      style={{ background: "var(--brand)" }}
-                      onClick={() => {
-                        if (!title.trim()) return;
-                        onAdd(title);
-                        setTitle("");
-                      }}
-              >
-                ➕ Add
-              </button>
-            </div>
+      <div className="flex items:center gap-2">
+        <input
+          ref={inputRef}
+          className="flex-1 rounded-xl border bg-white dark:bg-neutral-900 dark:border-neutral-700 px-3 py-2"
+          placeholder="Додати задачу (Enter)…"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && title.trim()) {
+              onAdd(title);
+              setTitle("");
+            }
+          }}
+        />
+        <button
+          className="rounded-xl px-3 py-2 text-white"
+          style={{ background: "var(--brand)" }}
+          onClick={() => {
+            if (!title.trim()) return;
+            onAdd(title);
+            setTitle("");
+          }}
+        >
+          ➕ Add
+        </button>
+      </div>
     );
   }
 
@@ -639,290 +682,290 @@
     if (!tasks.length)
       return <div className="opacity-60">Поки немає задач.</div>;
     return (
-            <div className="space-y-2">
-              {tasks.map((t) => (
-                      <TaskRow key={t.id} task={t} dense={dense} {...props} />
-              ))}
-            </div>
+      <div className="space-y-2">
+        {tasks.map((t) => (
+          <TaskRow key={t.id} task={t} dense={dense} {...props} />
+        ))}
+      </div>
     );
   }
 
   function TaskRow({
-                     task,
-                     dense,
-                     onToggle,
-                     onUpdate,
-                     onDelete,
-                     onAddSubtask,
-                     onToggleSubtask,
-                     onRemoveSubtask,
-                   }) {
+    task,
+    dense,
+    onToggle,
+    onUpdate,
+    onDelete,
+    onAddSubtask,
+    onToggleSubtask,
+    onRemoveSubtask,
+  }) {
     const [open, setOpen] = useState(false);
     const [editing, setEditing] = useState(false);
     const [title, setTitle] = useState(task.title);
-    const [tagInput, setTagInput] = useState("");
+       const [tagInput, setTagInput] = useState("");
     const [subInput, setSubInput] = useState("");
     const overdue =
-            task.dueDate && new Date(task.dueDate) < new Date(todayIso());
+      task.dueDate && new Date(task.dueDate) < new Date(todayIso());
 
     return (
-            <div className={"card " + (dense ? "text-sm" : "")}>
-              <div className="flex items-start gap-3">
-                <input
-                        type="checkbox"
-                        className="mt-1 h-5 w-5"
-                        checked={task.status === "done"}
-                        onChange={(e) => onToggle(task.id, e.target.checked)}
-                />
-                <div className="flex-1">
-                  {editing ? (
-                          <input
-                                  className="w-full rounded-lg border px-2 py-1 dark:bg-neutral-900"
-                                  value={title}
-                                  onChange={(e) => setTitle(e.target.value)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
-                                      onUpdate(task.id, { title });
-                                      setEditing(false);
-                                    }
-                                  }}
-                          />
-                  ) : (
-                          <div className="flex items-center gap-2">
-                            <div
-                                    className={
-                                            "font-medium " +
-                                            (task.status === "done"
-                                                    ? "line-through opacity-60"
-                                                    : "")
-                                    }
-                            >
-                              {task.title}
-                            </div>
-                            {task.priority !== "none" && (
-                                    <span
-                                            className={
-                                                    "rounded-full px-2 py-0.5 text-xs " +
-                                                    (task.priority === "high"
-                                                            ? "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300"
-                                                            : task.priority === "medium"
-                                                                    ? "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300"
-                                                                    : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300")
-                                            }
-                                    >
-                        {task.priority}
-                      </span>
-                            )}
-                          </div>
-                  )}
+      <div className={"card " + (dense ? "text-sm" : "")}>
+        <div className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            className="mt-1 h-5 w-5"
+            checked={task.status === "done"}
+            onChange={(e) => onToggle(task.id, e.target.checked)}
+          />
+          <div className="flex-1">
+            {editing ? (
+              <input
+                className="w-full rounded-lg border px-2 py-1 dark:bg-neutral-900"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    onUpdate(task.id, { title });
+                    setEditing(false);
+                  }
+                }}
+              />
+            ) : (
+              <div className="flex items-center gap-2">
+                <div
+                  className={
+                    "font-medium " +
+                    (task.status === "done"
+                      ? "line-through opacity-60"
+                      : "")
+                  }
+                >
+                  {task.title}
+                </div>
+                {task.priority !== "none" && (
+                  <span
+                    className={
+                      "rounded-full px-2 py-0.5 text-xs " +
+                      (task.priority === "high"
+                        ? "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300"
+                        : task.priority === "medium"
+                        ? "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300"
+                        : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300")
+                    }
+                  >
+                    {task.priority}
+                  </span>
+                )}
+              </div>
+            )}
 
-                  <div className="mt-1 flex flex-wrap items-center gap-2 opacity-80">
-                    {task.dueDate && (
-                            <span
-                                    className={
-                                            "inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-xs " +
-                                            (overdue
-                                                    ? "border-red-300 text-red-700 dark:border-red-700 dark:text-red-300"
-                                                    : "dark:border-neutral-700")
-                                    }
-                            >
-                      📅 {task.dueDate}
-                    </span>
-                    )}
+            <div className="mt-1 flex flex-wrap items-center gap-2 opacity-80">
+              {task.dueDate && (
+                <span
+                  className={
+                    "inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-xs " +
+                    (overdue
+                      ? "border-red-300 text-red-700 dark:border-red-700 dark:text-red-300"
+                      : "dark:border-neutral-700")
+                  }
+                >
+                  📅 {task.dueDate}
+                </span>
+              )}
+              {(task.tags || []).map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs dark:border-neutral-700"
+                >
+                  🏷️ {tag}
+                </span>
+              ))}
+            </div>
+
+            {open && (
+              <div className="mt-3 space-y-3">
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
+                  <select
+                    className="rounded-lg border px-2 py-1 dark:bg-neutral-800 dark:border-neutral-700"
+                    value={task.priority}
+                    onChange={(e) =>
+                      onUpdate(task.id, { priority: e.target.value })
+                    }
+                  >
+                    <option value="none">Priority: none</option>
+                    <option value="low">Priority: low</option>
+                    <option value="medium">Priority: medium</option>
+                    <option value="high">Priority: high</option>
+                  </select>
+
+                  <input
+                    type="date"
+                    className="rounded-lg border px-2 py-1 dark:bg-neutral-800 dark:border-neutral-700"
+                    value={task.dueDate || ""}
+                    onChange={(e) =>
+                      onUpdate(task.id, { dueDate: e.target.value })
+                    }
+                  />
+
+                  <input
+                    type="datetime-local"
+                    className="rounded-lg border px-2 py-1 dark:bg-neutral-800 dark:border-neutral-700"
+                    value={task.reminder || ""}
+                    onChange={(e) =>
+                      onUpdate(task.id, { reminder: e.target.value })
+                    }
+                  />
+
+                  <select
+                    className="rounded-lg border px-2 py-1 dark:bg-neutral-800 dark:border-neutral-700"
+                    value={task.recurrence || "none"}
+                    onChange={(e) =>
+                      onUpdate(task.id, { recurrence: e.target.value })
+                    }
+                  >
+                    <option value="none">No recurrence</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                  </select>
+                </div>
+
+                <div>
+                  <div className="mb-1 text-sm opacity-70">Notes</div>
+                  <textarea
+                    className="w-full rounded-lg border p-2 dark:bg-neutral-800 dark:border-neutral-700"
+                    rows="3"
+                    value={task.notes || ""}
+                    onChange={(e) =>
+                      onUpdate(task.id, { notes: e.target.value })
+                    }
+                  ></textarea>
+                </div>
+
+                <div>
+                  <div className="mb-1 text-sm opacity-70">Tags</div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      className="flex-1 rounded-lg border px-2 py-1 dark:bg-neutral-800 dark:border-neutral-700"
+                      placeholder="Add tag..."
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && tagInput.trim()) {
+                          onUpdate(task.id, {
+                            tags: [...(task.tags || []), tagInput.trim()],
+                          });
+                          setTagInput("");
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2">
                     {(task.tags || []).map((tag) => (
-                            <span
-                                    key={tag}
-                                    className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs dark:border-neutral-700"
-                            >
-                      🏷️ {tag}
-                    </span>
+                      <span
+                        key={tag}
+                        className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs dark:border-neutral-700"
+                      >
+                        🏷️ {tag}
+                        <button
+                          className="opacity-60 hover:opacity-100 ml-1"
+                          onClick={() =>
+                            onUpdate(task.id, {
+                              tags: (task.tags || []).filter(
+                                (t) => t !== tag
+                              ),
+                            })
+                          }
+                          title="Видалити тег"
+                        >
+                          ✖
+                        </button>
+                      </span>
                     ))}
                   </div>
-
-                  {open && (
-                          <div className="mt-3 space-y-3">
-                            <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
-                              <select
-                                      className="rounded-lg border px-2 py-1 dark:bg-neutral-800 dark:border-neutral-700"
-                                      value={task.priority}
-                                      onChange={(e) =>
-                                              onUpdate(task.id, { priority: e.target.value })
-                                      }
-                              >
-                                <option value="none">Priority: none</option>
-                                <option value="low">Priority: low</option>
-                                <option value="medium">Priority: medium</option>
-                                <option value="high">Priority: high</option>
-                              </select>
-
-                              <input
-                                      type="date"
-                                      className="rounded-lg border px-2 py-1 dark:bg-neutral-800 dark:border-neutral-700"
-                                      value={task.dueDate || ""}
-                                      onChange={(e) =>
-                                              onUpdate(task.id, { dueDate: e.target.value })
-                                      }
-                              />
-
-                              <input
-                                      type="datetime-local"
-                                      className="rounded-lg border px-2 py-1 dark:bg-neutral-800 dark:border-neutral-700"
-                                      value={task.reminder || ""}
-                                      onChange={(e) =>
-                                              onUpdate(task.id, { reminder: e.target.value })
-                                      }
-                              />
-
-                              <select
-                                      className="rounded-lg border px-2 py-1 dark:bg-neutral-800 dark:border-neutral-700"
-                                      value={task.recurrence || "none"}
-                                      onChange={(e) =>
-                                              onUpdate(task.id, { recurrence: e.target.value })
-                                      }
-                              >
-                                <option value="none">No recurrence</option>
-                                <option value="daily">Daily</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="monthly">Monthly</option>
-                              </select>
-                            </div>
-
-                            <div>
-                              <div className="mb-1 text-sm opacity-70">Notes</div>
-                              <textarea
-                                      className="w-full rounded-lg border p-2 dark:bg-neutral-800 dark:border-neutral-700"
-                                      rows="3"
-                                      value={task.notes || ""}
-                                      onChange={(e) =>
-                                              onUpdate(task.id, { notes: e.target.value })
-                                      }
-                              ></textarea>
-                            </div>
-
-                            <div>
-                              <div className="mb-1 text-sm opacity-70">Tags</div>
-                              <div className="flex items-center gap-2">
-                                <input
-                                        className="flex-1 rounded-lg border px-2 py-1 dark:bg-neutral-800 dark:border-neutral-700"
-                                        placeholder="Add tag..."
-                                        value={tagInput}
-                                        onChange={(e) => setTagInput(e.target.value)}
-                                        onKeyDown={(e) => {
-                                          if (e.key === "Enter" && tagInput.trim()) {
-                                            onUpdate(task.id, {
-                                              tags: [...(task.tags || []), tagInput.trim()],
-                                            });
-                                            setTagInput("");
-                                          }
-                                        }}
-                                />
-                              </div>
-                              <div className="mt-2 flex flex-wrap gap-2">
-                                {(task.tags || []).map((tag) => (
-                                        <span
-                                                key={tag}
-                                                className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs dark:border-neutral-700"
-                                        >
-                            🏷️ {tag}
-                                          <button
-                                                  className="opacity-60 hover:opacity-100 ml-1"
-                                                  onClick={() =>
-                                                          onUpdate(task.id, {
-                                                            tags: (task.tags || []).filter(
-                                                                    (t) => t !== tag
-                                                            ),
-                                                          })
-                                                  }
-                                                  title="Видалити тег"
-                                          >
-                              ✖
-                            </button>
-                          </span>
-                                ))}
-                              </div>
-                            </div>
-
-                            <div>
-                              <div className="mb-1 text-sm opacity-70">Subtasks</div>
-                              <div className="space-y-2">
-                                {(task.subtasks || []).map((s) => (
-                                        <div key={s.id} className="flex items-center gap-2">
-                                          <input
-                                                  type="checkbox"
-                                                  checked={s.done}
-                                                  onChange={() => onToggleSubtask(task.id, s.id)}
-                                          />
-                                          <div
-                                                  className={
-                                                          "flex-1 " +
-                                                          (s.done ? "line-through opacity-60" : "")
-                                                  }
-                                          >
-                                            {s.title}
-                                          </div>
-                                          <button
-                                                  className="rounded-lg p-1 hover:bg-black/5 dark:hover:bg-white/10"
-                                                  onClick={() => onRemoveSubtask(task.id, s.id)}
-                                          >
-                                            🗑️
-                                          </button>
-                                        </div>
-                                ))}
-                                <div className="flex items-center gap-2">
-                                  <input
-                                          className="flex-1 rounded-lg border px-2 py-1 dark:bg-neutral-800 dark:border-neutral-700"
-                                          placeholder="New subtask"
-                                          value={subInput}
-                                          onChange={(e) => setSubInput(e.target.value)}
-                                          onKeyDown={(e) => {
-                                            if (e.key === "Enter" && subInput.trim()) {
-                                              onAddSubtask(task.id, subInput.trim());
-                                              setSubInput("");
-                                            }
-                                          }}
-                                  />
-                                  <button
-                                          className="btn"
-                                          onClick={() => {
-                                            if (!subInput.trim()) return;
-                                            onAddSubtask(task.id, subInput.trim());
-                                            setSubInput("");
-                                          }}
-                                  >
-                                    ➕
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                  )}
                 </div>
 
-                <div className="ml-auto flex items-center gap-1">
-                  <button
-                          className="rounded-lg p-2 hover:bg-black/5 dark:hover:bg-white/10"
-                          onClick={() => setEditing((v) => !v)}
-                          title="Редагувати"
-                  >
-                    ✏️
-                  </button>
-                  <button
-                          className="rounded-lg p-2 hover:bg-black/5 dark:hover:bg-white/10"
-                          onClick={() => setOpen((v) => !v)}
-                          title="Деталі"
-                  >
-                    {open ? "🔽" : "▶️"}
-                  </button>
-                  <button
-                          className="rounded-lg p-2 hover:bg-red-50 dark:hover:bg-red-500/20"
-                          onClick={() => onDelete(task.id)}
-                          title="Видалити"
-                  >
-                    🗑️
-                  </button>
+                <div>
+                  <div className="mb-1 text-sm opacity-70">Subtasks</div>
+                  <div className="space-y-2">
+                    {(task.subtasks || []).map((s) => (
+                      <div key={s.id} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={s.done}
+                          onChange={() => onToggleSubtask(task.id, s.id)}
+                        />
+                        <div
+                          className={
+                            "flex-1 " +
+                            (s.done ? "line-through opacity-60" : "")
+                          }
+                        >
+                          {s.title}
+                        </div>
+                        <button
+                          className="rounded-lg p-1 hover:bg-black/5 dark:hover:bg-white/10"
+                          onClick={() => onRemoveSubtask(task.id, s.id)}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    ))}
+                    <div className="flex items-center gap-2">
+                      <input
+                        className="flex-1 rounded-lg border px-2 py-1 dark:bg-neutral-800 dark:border-neutral-700"
+                        placeholder="New subtask"
+                        value={subInput}
+                        onChange={(e) => setSubInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && subInput.trim()) {
+                            onAddSubtask(task.id, subInput.trim());
+                            setSubInput("");
+                          }
+                        }}
+                      />
+                      <button
+                        className="btn"
+                        onClick={() => {
+                          if (!subInput.trim()) return;
+                          onAddSubtask(task.id, subInput.trim());
+                          setSubInput("");
+                        }}
+                      >
+                        ➕
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+          </div>
+
+          <div className="ml-auto flex items-center gap-1">
+            <button
+              className="rounded-lg p-2 hover:bg-black/5 dark:hover:bg-white/10"
+              onClick={() => setEditing((v) => !v)}
+              title="Редагувати"
+            >
+              ✏️
+            </button>
+            <button
+              className="rounded-lg p-2 hover:bg-black/5 dark:hover:bg-white/10"
+              onClick={() => setOpen((v) => !v)}
+              title="Деталі"
+            >
+              {open ? "🔽" : "▶️"}
+            </button>
+            <button
+              className="rounded-lg p-2 hover:bg-red-50 dark:hover:bg-red-500/20"
+              onClick={() => onDelete(task.id)}
+              title="Видалити"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+      </div>
     );
   }
 
